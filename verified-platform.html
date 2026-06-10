@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Verified — Trusted Work. Verified Youth.</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --jet-black: #1E1E1E;
+    --deep-gray: #1A1A1A;
+    --navy: #0B1D33;
+    --green: #29FE29;
+    --blue: #2C76FF;
+    --soft-gray: #F5F5F5;
+    --blue-tint: #EFFBFF;
+    --yellow: #FFDE59;
+    --coral: #FF5C5C;
+    --white: #FFFFFF;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --purple: #7C3AED;
+    --indigo: #4F46E5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: #060e1a;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px 0 60px;
+  }
+
+  .outer-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
+
+  /* DEMO NAV */
+  .demo-nav {
+    width: 390px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 8px; display: flex; gap: 4px; overflow-x: auto;
+    flex-wrap: nowrap; margin-bottom: 16px;
+  }
+  .demo-nav::-webkit-scrollbar { display: none; }
+  .demo-tab {
+    background: transparent; border: none; border-radius: 8px; padding: 7px 12px;
+    color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif; cursor: pointer; white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .demo-tab:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+  .demo-tab.active { background: var(--blue); color: white; }
+
+  /* DEVICE SHELL */
+  .device {
+    width: 390px; min-height: 844px; background: var(--soft-gray);
+    border-radius: 44px; overflow: hidden;
+    box-shadow: 0 50px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.07), inset 0 0 0 1px rgba(255,255,255,0.04);
+    position: relative;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--navy); padding: 14px 28px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .status-bar .time { color: white; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; }
+  .status-bar .icons { color: white; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+
+  /* SCREENS */
+  .screen { display: none; min-height: 800px; flex-direction: column; background: var(--soft-gray); overflow-y: auto; max-height: 800px; }
+  .screen.active { display: flex; }
+  .screen::-webkit-scrollbar { display: none; }
+  .scroll-content { flex: 1; overflow-y: auto; }
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* TYPOGRAPHY */
+  h1 { font-size: 28px; font-weight: 800; line-height: 1.2; }
+  h2 { font-size: 22px; font-weight: 700; line-height: 1.3; }
+
+  /* BUTTONS */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 16px 24px; border-radius: 100px; border: none; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;
+    transition: all 0.18s; width: 100%; letter-spacing: 0.2px;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: #1a5fd6; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(44,118,255,0.35); }
+  .btn-green { background: var(--green); color: var(--jet-black); }
+  .btn-green:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(41,254,41,0.3); }
+  .btn-dark { background: var(--navy); color: white; }
+  .btn-outline { background: transparent; color: var(--blue); border: 2px solid var(--blue); }
+  .btn-ghost { background: transparent; color: var(--jet-black); border: 2px solid var(--border); }
+  .btn-sm { padding: 10px 20px; font-size: 13px; }
+
+  /* CARDS */
+  .card { background: white; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+  .card-p { padding: 18px; }
+
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.4px; text-transform: uppercase; }
+  .badge-green { background: #DCFCE7; color: #16A34A; }
+  .badge-blue { background: #DBEAFE; color: #1D4ED8; }
+  .badge-yellow { background: #FEF9C3; color: #A16207; }
+  .badge-red { background: #FEE2E2; color: #DC2626; }
+  .badge-gray { background: #F3F4F6; color: #6B7280; }
+  .badge-purple { background: #EDE9FE; color: #7C3AED; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { background: white; border-top: 1px solid var(--border); display: flex; padding: 8px 0 22px; position: sticky; bottom: 0; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px; cursor: pointer; border: none; background: transparent; }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; color: #9CA3AF; }
+  .nav-item.active .nav-label { color: var(--blue); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); }
+
+  /* TOP BAR */
+  .top-bar { background: var(--navy); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .top-bar-title { color: white; font-size: 18px; font-weight: 700; }
+  .back-btn { color: white; background: rgba(255,255,255,0.12); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; flex-shrink: 0; }
+
+  /* METRIC CARD */
+  .metric-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .metric-value { font-size: 26px; font-weight: 800; color: var(--jet-black); font-family: 'Space Grotesk', sans-serif; }
+  .metric-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+  .metric-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 10px; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); }
+
+  /* SECTION */
+  .section { padding: 20px; }
+  .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 14px; font-family: 'Space Grotesk', sans-serif; }
+
+  /* FORMS */
+  .form-label { font-size: 11px; font-weight: 700; color: var(--jet-black); margin-bottom: 6px; display: block; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--border); font-size: 14px; font-family: 'Noto Sans', sans-serif; outline: none; transition: border-color 0.2s; background: white; }
+  .form-input:focus { border-color: var(--blue); }
+  .form-select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--border); font-size: 14px; font-family: 'Noto Sans', sans-serif; outline: none; background: white; }
+
+  /* CATEGORY BUTTONS */
+  .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .category-btn { padding: 12px 8px; border-radius: 12px; border: 2px solid var(--border); background: white; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.18s; text-align: center; font-family: 'Space Grotesk', sans-serif; color: var(--jet-black); }
+  .category-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .cat-selected { border-color: var(--blue) !important; background: #DBEAFE !important; color: var(--blue) !important; }
+  .cat-red { border-color: var(--coral) !important; background: #FEE2E2 !important; color: var(--coral) !important; }
+  .cat-green { border-color: #16A34A !important; background: #DCFCE7 !important; color: #16A34A !important; }
+  .cat-yellow { border-color: #A16207 !important; background: #FEF9C3 !important; color: #A16207 !important; }
+  .cat-purple { border-color: var(--purple) !important; background: #EDE9FE !important; color: var(--purple) !important; }
+  .cat-gray { border-color: #6B7280 !important; background: #F3F4F6 !important; color: #6B7280 !important; }
+  .category-needs { grid-column: span 2; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.04); } }
+  .fade-up { animation: fadeUp 0.35s ease forwards; }
+
+  /* ─── LOGO ─── */
+  .logo-icon { width: 44px; height: 44px; background: var(--jet-black); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; font-family: 'Space Grotesk', sans-serif; color: var(--green); box-shadow: 0 0 0 2px rgba(41,254,41,0.25); flex-shrink: 0; }
+  .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: white; letter-spacing: 1.5px; }
+
+  /* ─── PROGRESS RING ─── */
+  .progress-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .progress-ring-text { position: absolute; text-align: center; }
+</style>
+</head>
+<body>
+<div class="outer-wrapper">
+
+<!-- DEMO NAVIGATION TABS -->
+<div class="demo-nav">
+  <button class="demo-tab active" onclick="go('login')">1. Login</button>
+  <button class="demo-tab" onclick="go('verify')">2. Verify</button>
+  <button class="demo-tab" onclick="go('training')">3. Training</button>
+  <button class="demo-tab" onclick="go('dashboard')">4. Dashboard</button>
+  <button class="demo-tab" onclick="go('task')">5. Task</button>
+  <button class="demo-tab" onclick="go('submitted')">6. Submitted</button>
+  <button class="demo-tab" onclick="go('review')">7. Review</button>
+  <button class="demo-tab" onclick="go('earnings')">8. Earnings</button>
+  <button class="demo-tab" onclick="go('admin')">9. Admin</button>
+  <button class="demo-tab" onclick="go('impact')">10. Impact</button>
+</div>
+
+<div class="device">
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 1 — LOGIN
+  ═══════════════════════════════════ -->
+  <div class="screen active" id="screen-login">
+    <!-- Hero -->
+    <div style="background:linear-gradient(160deg,#0B1D33 0%,#0d2a52 60%,#0B1D33 100%);padding:40px 28px 32px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(44,118,255,0.18) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-50px;left:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(41,254,41,0.1) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+      <!-- Logo -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:44px;">
+        <div class="logo-icon">V</div>
+        <span class="logo-text">VERIFIED</span>
+      </div>
+      <!-- Tagline + Headline -->
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--green);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px;">Trusted Work. Verified Youth.</div>
+      <h1 style="color:white;font-size:30px;font-weight:800;line-height:1.2;margin-bottom:12px;">Verified digital<br/>work for <span style="color:var(--green);">trusted</span><br/>youth</h1>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.65;margin-bottom:28px;">Complete your verified profile and start earning through simple online tasks — from anywhere in Telangana.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:100px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.75);font-family:'Space Grotesk',sans-serif;font-weight:500;">🛡️ Government Backed</span>
+        <span style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:100px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.75);font-family:'Space Grotesk',sans-serif;font-weight:500;">💰 Daily Earnings</span>
+        <span style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:100px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.75);font-family:'Space Grotesk',sans-serif;font-weight:500;">📱 Work From Home</span>
+      </div>
+    </div>
+    <!-- Login Buttons -->
+    <div style="background:var(--soft-gray);padding:28px;flex:1;">
+      <div style="font-size:19px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Get Started</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:22px;">Create your account in 30 seconds</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;">
+        <button class="btn btn-primary" onclick="go('verify')"><span>📱</span>Continue with Mobile Number</button>
+        <button class="btn btn-ghost" onclick="go('verify')"><span>📧</span>Continue with Email</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:12px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">or verify with</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+      <button class="btn btn-dark" onclick="go('verify')" style="margin-bottom:22px;"><span>🏛️</span>Verify with DigiLocker</button>
+      <p style="font-size:11px;color:var(--text-muted);text-align:center;line-height:1.7;">By continuing you agree to our <span style="color:var(--blue);">Terms</span> &amp; <span style="color:var(--blue);">Privacy Policy</span>. Your data is never shared without consent.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 2 — VERIFICATION DASHBOARD
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-verify">
+    <!-- Hero -->
+    <div style="background:linear-gradient(135deg,#0B1D33,#1a3a6b);padding:20px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+        <div class="progress-ring">
+          <svg width="76" height="76"><circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="6"/><circle cx="38" cy="38" r="32" fill="none" stroke="#29FE29" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="110" stroke-linecap="round" transform="rotate(-90 38 38)"/></svg>
+          <div class="progress-ring-text"><div style="font-size:17px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">45%</div></div>
+        </div>
+        <div>
+          <div style="color:white;font-size:20px;font-weight:700;">Verify Profile</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:3px;">Complete all steps to unlock gig work</div>
+          <div style="margin-top:8px;"><span class="badge badge-yellow">🔒 Gig Work Locked</span></div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 15px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">⚠️</span>
+        <div>
+          <div style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;">3 steps pending verification</div>
+          <div style="color:rgba(255,255,255,0.45);font-size:11px;margin-top:2px;">Complete to unlock ₹500+ daily earning potential</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Verification Steps</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <!-- Verified -->
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✅</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Basic Details</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Name, mobile, location</div></div>
+            <span class="badge badge-green">Verified</span>
+          </div>
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎓</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Education</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Degree, college, year</div></div>
+            <span class="badge badge-green">Verified</span>
+          </div>
+          <!-- Under Review -->
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#FEF9C3;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📄</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Resume</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Upload your resume PDF</div></div>
+            <span class="badge badge-yellow">Under Review</span>
+          </div>
+          <!-- Pending -->
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⚡</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Skills</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Select your top skills</div></div>
+            <span class="badge badge-gray">Pending</span>
+          </div>
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🪪</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Documents</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Aadhaar, PAN or DigiLocker</div></div>
+            <span class="badge badge-gray">Pending</span>
+          </div>
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:44px;height:44px;border-radius:12px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔐</div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:var(--jet-black);">Consent &amp; Privacy</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Data usage agreement</div></div>
+            <span class="badge badge-gray">Pending</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 20px 28px;">
+        <button class="btn btn-primary" onclick="go('training')">Continue Verification →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 3 — TRAINING
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-training">
+    <div style="background:linear-gradient(135deg,#0B1D33,#0d2a52);padding:20px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+        <button class="back-btn" onclick="go('verify')">←</button>
+        <span style="color:rgba(255,255,255,0.6);font-size:14px;font-family:'Space Grotesk',sans-serif;">Training Module</span>
+      </div>
+      <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;margin-bottom:8px;">Step 3 of 6</div>
+      <h2 style="color:white;font-size:22px;font-weight:800;margin-bottom:6px;">Learn Email Types</h2>
+      <p style="color:rgba(255,255,255,0.6);font-size:13px;line-height:1.55;margin-bottom:14px;">Understand how to identify and classify job emails correctly before you start earning.</p>
+      <div style="background:rgba(255,255,255,0.12);border-radius:100px;height:5px;overflow:hidden;"><div style="width:50%;height:100%;background:var(--green);border-radius:100px;"></div></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:6px;font-family:'Space Grotesk',sans-serif;">3 of 6 modules complete</div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Email Categories</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📨</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Applied Email</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Company confirms they received your application.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Thank you for applying</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Application received</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">❌</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Rejected Email</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Company will not proceed with your application.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Unfortunately</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Other candidates</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📅</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Interview Email</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Company asks you to schedule or attend a call.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Schedule interview</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Book a call</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Calendly</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#FEF9C3;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🧪</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Assessment Email</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Complete a test, coding challenge, or skill quiz.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">HackerRank</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Codility</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">TestGorilla</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📋</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Next Steps Email</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Asks you to fill a form, upload documents, or confirm.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Complete profile</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Upload documents</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border-radius:16px;padding:15px 17px;display:flex;align-items:flex-start;gap:13px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <div style="width:48px;height:48px;border-radius:14px;background:#FFF7ED;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🔍</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--jet-black);margin-bottom:4px;">Needs Review</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:6px;">Screenshot blurry, cropped, or email content unclear.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Blurry screenshot</span>
+                <span style="background:var(--soft-gray);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">Incomplete email</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div style="padding:0 20px 28px;">
+        <button class="btn btn-green" onclick="go('dashboard')">Start Practice Task →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 4 — GIG WORK DASHBOARD
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-dashboard">
+    <div style="background:linear-gradient(135deg,#0B1D33,#1a3a6b);padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="color:white;font-size:22px;font-weight:700;">Hello, <span style="color:var(--green);">Ravi</span> 👋</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:3px;">12 new tasks available today</div>
+        </div>
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#2C76FF,#7C3AED);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;flex-shrink:0;">R</div>
+      </div>
+      <div style="background:rgba(41,254,41,0.12);border:1px solid rgba(41,254,41,0.25);border-radius:12px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;">Accuracy Streak</div>
+          <div style="color:white;font-size:15px;font-weight:700;margin-top:2px;">94% — 🔥 12 day streak!</div>
+        </div>
+        <div style="font-size:28px;">⭐</div>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Today's Overview</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="metric-card"><div class="metric-icon" style="background:#DBEAFE;">📬</div><div class="metric-value">12</div><div class="metric-label">Available Tasks</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#DCFCE7;">✅</div><div class="metric-value">18</div><div class="metric-label">Completed Today</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#FEF9C3;">🎯</div><div class="metric-value">94%</div><div class="metric-label">Accuracy Score</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#F0FDF4;">💰</div><div class="metric-value">₹126</div><div class="metric-label">Est. Earnings</div></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:0;">
+        <div class="section-title">Performance</div>
+        <div class="card card-p">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
+            <div><div style="font-size:14px;font-weight:500;color:var(--jet-black);">Tasks Completed</div><div style="width:160px;height:5px;background:var(--soft-gray);border-radius:100px;overflow:hidden;margin-top:6px;"><div style="width:72%;height:100%;background:var(--blue);border-radius:100px;"></div></div></div>
+            <div style="font-size:14px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;">144/200</div>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
+            <div><div style="font-size:14px;font-weight:500;color:var(--jet-black);">Accuracy</div><div style="width:160px;height:5px;background:var(--soft-gray);border-radius:100px;overflow:hidden;margin-top:6px;"><div style="width:94%;height:100%;background:var(--green);border-radius:100px;"></div></div></div>
+            <div style="font-size:14px;font-weight:700;color:#16A34A;font-family:'Space Grotesk',sans-serif;">94%</div>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
+            <div style="font-size:14px;font-weight:500;color:var(--jet-black);">Pending Review</div>
+            <div style="font-size:14px;font-weight:700;color:var(--warning);font-family:'Space Grotesk',sans-serif;">6 tasks</div>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border:none;">
+            <div style="font-size:14px;font-weight:500;color:var(--jet-black);">Rejection Rate</div>
+            <div style="font-size:14px;font-weight:700;color:var(--coral);font-family:'Space Grotesk',sans-serif;">2.1%</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:0 20px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button class="btn btn-primary" onclick="go('task')">▶ Start Task</button>
+        <button class="btn btn-ghost" onclick="go('training')">📚 Training</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="go('dashboard')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span><span class="nav-dot"></span></button>
+      <button class="nav-item" onclick="go('task')"><span class="nav-icon">📬</span><span class="nav-label">Tasks</span></button>
+      <button class="nav-item" onclick="go('earnings')"><span class="nav-icon">💰</span><span class="nav-label">Earnings</span></button>
+      <button class="nav-item" onclick="go('verify')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 5 — EMAIL TASK
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-task">
+    <div style="background:var(--navy);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:white;font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;">Task #2847</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-top:1px;font-family:'Space Grotesk',sans-serif;">3 of 20 tasks</div>
+      </div>
+      <div id="task-timer" style="background:rgba(255,255,255,0.1);border-radius:100px;padding:6px 14px;color:var(--yellow);font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;">⏱ 02:34</div>
+      <button class="back-btn" onclick="go('dashboard')">✕</button>
+    </div>
+
+    <div class="scroll-content" style="background:white;">
+      <div style="padding:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;font-family:'Space Grotesk',sans-serif;margin-bottom:12px;">Email Screenshot</div>
+
+        <!-- Email Preview -->
+        <div style="background:white;border-radius:16px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:18px;box-shadow:0 4px 14px rgba(0,0,0,0.08);">
+          <div style="background:#F8FAFC;padding:13px 15px;border-bottom:1px solid var(--border);">
+            <div style="font-size:13px;font-weight:600;color:var(--jet-black);">📧 noreply@greenhouse.io</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Re: Your application at Stripe — Software Engineer</div>
+            <div style="font-size:11px;color:#9CA3AF;margin-top:3px;">Mon, 10 Jun 2024, 9:15 AM</div>
+          </div>
+          <div style="padding:15px;font-size:13px;line-height:1.65;color:var(--jet-black);">
+            <p>Dear Priya,</p><br/>
+            <p>Thank you for your interest in the <strong style="color:var(--blue);">Software Engineer</strong> position at <strong style="color:var(--blue);">Stripe</strong>.</p><br/>
+            <p>We'd love to learn more. Please <span style="background:rgba(255,222,89,0.4);padding:1px 4px;border-radius:4px;font-weight:600;">schedule a 30-minute call</span> with our recruiting team:</p><br/>
+            <p style="color:var(--blue);font-weight:600;">→ calendly.com/stripe-recruiting/priya-call</p><br/>
+            <p>Please book within the next <strong>5 business days</strong>.</p><br/>
+            <p style="color:var(--text-muted);">Best regards,<br/>Jamie Chen — Stripe Recruiting</p>
+          </div>
+        </div>
+
+        <!-- Fields -->
+        <div style="margin-bottom:13px;"><label class="form-label">Company Name *</label><input class="form-input" value="Stripe" /></div>
+        <div style="margin-bottom:13px;"><label class="form-label">Job Title</label><input class="form-input" value="Software Engineer" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;">
+          <div><label class="form-label">ATS Platform</label><select class="form-select"><option>Greenhouse</option><option>Lever</option><option>Workday</option><option>Other</option></select></div>
+          <div><label class="form-label">Email Date</label><input class="form-input" value="10 Jun 2024" /></div>
+        </div>
+        <div style="margin-bottom:13px;"><label class="form-label">Screenshot Quality *</label><select class="form-select"><option>Clear — Full email visible</option><option>Partial — Some content cut off</option><option>Blurry — Hard to read</option></select></div>
+
+        <!-- Categories -->
+        <div style="margin-bottom:13px;">
+          <label class="form-label">Email Category *</label>
+          <div class="category-grid" id="cat-grid">
+            <button class="category-btn" onclick="selectCat(this,'')">📨 Applied</button>
+            <button class="category-btn" onclick="selectCat(this,'cat-red')">❌ Rejected</button>
+            <button class="category-btn cat-selected" onclick="selectCat(this,'')">📅 Interview</button>
+            <button class="category-btn" onclick="selectCat(this,'cat-yellow')">🧪 Assessment</button>
+            <button class="category-btn" onclick="selectCat(this,'cat-purple')">📋 Next Steps</button>
+            <button class="category-btn" onclick="selectCat(this,'cat-green')">🎉 Offer / Selected</button>
+            <button class="category-btn category-needs" onclick="selectCat(this,'cat-gray')">🔍 Needs Review</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:6px;"><label class="form-label">Notes (optional)</label><input class="form-input" placeholder="Any additional observations..." /></div>
+      </div>
+
+      <div style="padding:0 16px 28px;display:flex;flex-direction:column;gap:10px;">
+        <button class="btn btn-primary" onclick="go('submitted')">✅ Save Classification</button>
+        <button class="btn btn-outline" onclick="go('submitted')">👁 Send to Review</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 6 — TASK SUBMITTED
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-submitted">
+    <div class="top-bar"><span class="top-bar-title">Task Submitted</span><button class="back-btn" onclick="go('task')">←</button></div>
+    <div class="scroll-content" style="background:white;">
+      <div style="display:flex;flex-direction:column;align-items:center;padding:36px 28px 28px;text-align:center;">
+        <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:22px;animation:pulse 2s infinite;box-shadow:0 8px 28px rgba(41,254,41,0.2);">✅</div>
+        <div style="font-size:24px;font-weight:800;color:var(--jet-black);margin-bottom:8px;">Task Submitted!</div>
+        <div style="font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:26px;">Your classification is now under review. You'll earn once approved.</div>
+
+        <div style="background:var(--soft-gray);border-radius:16px;padding:18px;width:100%;margin-bottom:22px;text-align:left;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span style="font-size:13px;color:var(--text-muted);">Company</span><span style="font-size:13px;font-weight:700;color:var(--jet-black);">Stripe</span></div>
+          <div class="divider"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span style="font-size:13px;color:var(--text-muted);">Category</span><span style="font-size:13px;font-weight:700;color:var(--blue);">📅 Interview</span></div>
+          <div class="divider"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span style="font-size:13px;color:var(--text-muted);">Status</span><span class="badge badge-yellow">Under Review</span></div>
+          <div class="divider"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span style="font-size:13px;color:var(--text-muted);">Est. Earning</span><span style="font-size:17px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">+₹7</span></div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#0B1D33,#1a3a6b);border-radius:16px;padding:15px;width:100%;display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <div style="font-size:30px;">🔥</div>
+          <div>
+            <div style="color:var(--green);font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;">12-Day Accuracy Streak!</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:2px;">You're in the top 5% of workers this week.</div>
+          </div>
+        </div>
+
+        <div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="btn btn-primary" onclick="go('task')">Next Task</button>
+          <button class="btn btn-ghost" onclick="go('dashboard')">Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 7 — REVIEW & LEARNING
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-review">
+    <div class="top-bar"><span class="top-bar-title">Review &amp; Learning</span><button class="back-btn" onclick="go('dashboard')">✕</button></div>
+    <div class="scroll-content">
+      <!-- Alert hero -->
+      <div style="background:linear-gradient(135deg,#FEE2E2,#fff7f7);padding:20px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;background:var(--coral);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">⚠️</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--jet-black);">Incorrect Classification</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">Task #2841 — Learn and improve</div>
+          </div>
+        </div>
+
+        <!-- Email excerpt -->
+        <div style="background:white;border-radius:13px;padding:13px;border:1px solid var(--border);margin-bottom:15px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-family:'Space Grotesk',sans-serif;margin-bottom:7px;">Email Excerpt</div>
+          <div style="font-size:13px;color:var(--jet-black);line-height:1.6;">"...we would like you to complete a short <strong>HackerRank assessment</strong>. The test takes ~45 minutes. Please complete by Friday..."</div>
+        </div>
+
+        <!-- Answer comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="border-radius:12px;padding:14px;background:#FEE2E2;border:2px solid var(--coral);">
+            <div style="font-size:10px;font-weight:700;color:var(--coral);text-transform:uppercase;letter-spacing:0.5px;font-family:'Space Grotesk',sans-serif;margin-bottom:5px;">Your Answer</div>
+            <div style="font-size:14px;font-weight:700;color:var(--jet-black);">📅 Interview</div>
+          </div>
+          <div style="border-radius:12px;padding:14px;background:#DCFCE7;border:2px solid #16A34A;">
+            <div style="font-size:10px;font-weight:700;color:#16A34A;text-transform:uppercase;letter-spacing:0.5px;font-family:'Space Grotesk',sans-serif;margin-bottom:5px;">Correct Answer</div>
+            <div style="font-size:14px;font-weight:700;color:var(--jet-black);">🧪 Assessment</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div style="background:#FEE2E2;border-radius:14px;padding:15px;margin-bottom:13px;border-left:4px solid var(--coral);">
+          <div style="font-size:11px;font-weight:700;color:var(--coral);text-transform:uppercase;letter-spacing:0.5px;font-family:'Space Grotesk',sans-serif;margin-bottom:6px;">Why This Was Wrong</div>
+          <div style="font-size:14px;color:var(--jet-black);line-height:1.6;">The email mentions <strong>HackerRank</strong> — an online assessment platform. Any mention of HackerRank, Codility, or TestGorilla = <strong>Assessment</strong>, not Interview.</div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:14px;padding:15px;border-left:4px solid var(--blue);margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.5px;font-family:'Space Grotesk',sans-serif;margin-bottom:6px;">💡 Learning Tip</div>
+          <div style="font-size:14px;color:var(--jet-black);line-height:1.6;"><strong>Interview</strong> = scheduling a human call.<br/><strong>Assessment</strong> = completing a test or challenge.</div>
+        </div>
+
+        <div style="background:var(--soft-gray);border-radius:13px;padding:15px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:700;color:var(--jet-black);margin-bottom:10px;">Assessment Keywords:</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span class="badge badge-yellow">HackerRank</span><span class="badge badge-yellow">Codility</span><span class="badge badge-yellow">HireVue</span><span class="badge badge-yellow">TestGorilla</span><span class="badge badge-yellow">Coding challenge</span><span class="badge badge-yellow">Skill test</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="go('task')">Got It — Next Task →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 8 — EARNINGS DASHBOARD
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-earnings">
+    <div style="background:linear-gradient(135deg,#0B1D33,#1a3a6b);padding:22px 20px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">
+        <div>
+          <div style="color:rgba(255,255,255,0.5);font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Total Earnings</div>
+          <div style="font-size:44px;font-weight:900;color:white;font-family:'Space Grotesk',sans-serif;line-height:1;">₹2,847</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:4px;">June 2024</div>
+        </div>
+        <div style="background:rgba(41,254,41,0.12);border:1px solid rgba(41,254,41,0.25);border-radius:14px;padding:12px;text-align:center;">
+          <div style="color:var(--green);font-size:24px;font-weight:800;font-family:'Space Grotesk',sans-serif;">94%</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:2px;">Accuracy</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+        <div style="background:rgba(255,255,255,0.09);border-radius:13px;padding:13px;"><div style="font-size:20px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">₹126</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Today</div></div>
+        <div style="background:rgba(255,255,255,0.09);border-radius:13px;padding:13px;"><div style="font-size:20px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">₹748</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">This Week</div></div>
+        <div style="background:rgba(255,255,255,0.09);border-radius:13px;padding:13px;"><div style="font-size:20px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">144</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Approved Tasks</div></div>
+        <div style="background:rgba(255,255,255,0.09);border-radius:13px;padding:13px;"><div style="font-size:20px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">₹87</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Accuracy Bonus</div></div>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Recent Earnings</div>
+        <div class="card" style="padding:0 16px;">
+          <!-- Items -->
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✅</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Task #2847 — Stripe</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Interview · Approved · Today 9:45 AM</div></div>
+            <div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">+₹7</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✅</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Task #2846 — Google</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Applied · Approved · Today 9:30 AM</div></div>
+            <div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">+₹5</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:#FEF9C3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⏳</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Task #2845 — Amazon</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Assessment · Pending Review</div></div>
+            <div style="font-size:16px;font-weight:800;color:var(--warning);font-family:'Space Grotesk',sans-serif;">₹6</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✅</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Task #2840 — Microsoft</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Rejected · Approved · Yesterday</div></div>
+            <div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">+₹5</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 0;">
+            <div style="width:40px;height:40px;border-radius:12px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❌</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Task #2838 — Meta</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Incorrect classification · Yesterday</div></div>
+            <div style="font-size:16px;font-weight:800;color:var(--coral);font-family:'Space Grotesk',sans-serif;">₹0</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 20px 24px;">
+        <button class="btn btn-green">💳 View Payment Details</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-item" onclick="go('dashboard')"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" onclick="go('task')"><span class="nav-icon">📬</span><span class="nav-label">Tasks</span></button>
+      <button class="nav-item active"><span class="nav-icon">💰</span><span class="nav-label">Earnings</span><span class="nav-dot"></span></button>
+      <button class="nav-item" onclick="go('verify')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 9 — ADMIN QUALITY DASHBOARD
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-admin">
+    <div style="background:var(--jet-black);padding:20px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:white;font-size:20px;font-weight:700;">Admin Dashboard</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:2px;">Quality Operations · June 2024</div>
+      </div>
+      <span style="background:var(--green);color:var(--jet-black);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;">ADMIN</span>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Platform Overview</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:white;border-radius:14px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"><div style="font-size:28px;font-weight:800;color:var(--blue);font-family:'Space Grotesk',sans-serif;">4,821</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Total Tasks</div></div>
+          <div style="background:white;border-radius:14px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"><div style="font-size:28px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">3,947</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Completed</div></div>
+          <div style="background:white;border-radius:14px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"><div style="font-size:28px;font-weight:800;color:var(--warning);font-family:'Space Grotesk',sans-serif;">312</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Pending Review</div></div>
+          <div style="background:white;border-radius:14px;padding:15px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"><div style="font-size:28px;font-weight:800;color:var(--purple);font-family:'Space Grotesk',sans-serif;">91.8%</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Accuracy Rate</div></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:0;">
+        <div class="section-title">Category Distribution</div>
+        <div class="card card-p">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Applied</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:34%;height:100%;background:var(--blue);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">34%</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Rejected</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:28%;height:100%;background:var(--coral);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">28%</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Interview</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:18%;height:100%;background:var(--green);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">18%</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Assessment</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:11%;height:100%;background:var(--yellow);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">11%</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Next Steps</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:6%;height:100%;background:var(--purple);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">6%</span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:13px;color:var(--jet-black);width:90px;">Offer</span><div style="flex:1;height:8px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:3%;height:100%;background:var(--warning);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;width:36px;text-align:right;">3%</span></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:0;">
+        <div class="section-title">Top Workers This Week</div>
+        <div class="card" style="padding:0 16px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2C76FF,#7C3AED);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:700;flex-shrink:0;">R</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Ravi Kumar</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px;">Hyderabad · 144 tasks</div></div>
+            <div style="text-align:right;"><div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">94%</div><span class="badge badge-green" style="font-size:10px;">Top Worker</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#29FE29,#10B981);display:flex;align-items:center;justify-content:center;color:#0B1D33;font-size:16px;font-weight:700;flex-shrink:0;">P</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Priya Sharma</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px;">Warangal · 138 tasks</div></div>
+            <div style="text-align:right;"><div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">97%</div><span class="badge badge-blue" style="font-size:10px;">Star</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FFDE59,#F59E0B);display:flex;align-items:center;justify-content:center;color:#1E1E1E;font-size:16px;font-weight:700;flex-shrink:0;">A</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Anjali Reddy</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px;">Nizamabad · 121 tasks</div></div>
+            <div style="font-size:16px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">91%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7C3AED,#4F46E5);display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:700;flex-shrink:0;">M</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--jet-black);">Mohammed Ali</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px;">Karimnagar · 118 tasks</div></div>
+            <div style="font-size:16px;font-weight:800;color:var(--warning);font-family:'Space Grotesk',sans-serif;">88%</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:0 20px 28px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button class="btn btn-primary btn-sm" onclick="go('impact')">📊 Impact Dashboard</button>
+        <button class="btn btn-ghost btn-sm">📥 Export Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 10 — TELANGANA IMPACT
+  ═══════════════════════════════════ -->
+  <div class="screen" id="screen-impact">
+    <div style="background:linear-gradient(150deg,#0B1D33 0%,#1a3a6b 60%,#0B1D33 100%);padding:28px 20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(41,254,41,0.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
+      <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;margin-bottom:8px;">Government of Telangana · Impact Report</div>
+      <h2 style="color:white;font-size:22px;font-weight:800;line-height:1.2;margin-bottom:6px;">Telangana Youth<br/>Digital Work Initiative</h2>
+      <div style="color:rgba(255,255,255,0.55);font-size:13px;margin-bottom:22px;">Empowering youth with verified digital work opportunities</div>
+
+      <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;">
+        <div>
+          <div style="font-size:58px;font-weight:900;color:var(--green);font-family:'Space Grotesk',sans-serif;line-height:1;">12,847</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:4px;">Youth Onboarded</div>
+        </div>
+        <div style="margin-bottom:10px;"><span style="background:rgba(41,254,41,0.18);border:1px solid rgba(41,254,41,0.3);border-radius:100px;padding:5px 12px;color:var(--green);font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;">↑ 23% this month</span></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:13px;padding:14px;"><div style="font-size:22px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">8,421</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Verified Workers</div></div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:13px;padding:14px;"><div style="font-size:22px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">5,234</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Women Workers</div></div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:13px;padding:14px;"><div style="font-size:22px;font-weight:800;color:white;font-family:'Space Grotesk',sans-serif;">3,891</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Rural Workers</div></div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:13px;padding:14px;"><div style="font-size:22px;font-weight:800;color:var(--green);font-family:'Space Grotesk',sans-serif;">₹42.3L</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Total Earnings Paid</div></div>
+      </div>
+    </div>
+
+    <div class="scroll-content">
+      <div class="section">
+        <div class="section-title">Platform Performance</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="metric-card"><div class="metric-icon" style="background:#DBEAFE;">📬</div><div class="metric-value" style="color:var(--blue);">4.8L</div><div class="metric-label">Tasks Completed</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#DCFCE7;">🎯</div><div class="metric-value" style="color:#16A34A;">91.8%</div><div class="metric-label">Avg. Accuracy</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#FEF9C3;">💰</div><div class="metric-value" style="color:var(--warning);">₹329</div><div class="metric-label">Avg. Monthly Earn</div></div>
+          <div class="metric-card"><div class="metric-icon" style="background:#EDE9FE;">🏘️</div><div class="metric-value" style="color:var(--purple);">31</div><div class="metric-label">Districts Active</div></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:0;">
+        <div class="section-title">District-wise Participation</div>
+        <div class="card card-p">
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Hyderabad</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:90%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">2,847</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Warangal</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:72%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">1,934</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Karimnagar</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:58%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">1,621</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Nizamabad</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:50%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">1,284</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Khammam</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:44%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">1,102</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Nalgonda</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:38%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">978</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;"><span style="font-size:13px;font-weight:600;color:var(--jet-black);width:100px;">Mahbubnagar</span><div style="flex:1;height:7px;background:var(--soft-gray);border-radius:100px;overflow:hidden;"><div style="width:30%;height:100%;background:linear-gradient(90deg,#2C76FF,#29FE29);border-radius:100px;"></div></div><span style="font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;width:40px;text-align:right;">812</span></div>
+        </div>
+      </div>
+
+      <!-- Demographics -->
+      <div class="section" style="padding-top:0;">
+        <div class="section-title">Worker Demographics</div>
+        <div class="card card-p">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+            <div><div style="font-size:24px;font-weight:800;color:var(--blue);font-family:'Space Grotesk',sans-serif;">41%</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Women</div><div style="height:3px;background:var(--blue);border-radius:100px;margin-top:7px;"></div></div>
+            <div><div style="font-size:24px;font-weight:800;color:#16A34A;font-family:'Space Grotesk',sans-serif;">30%</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Rural</div><div style="height:3px;background:var(--green);border-radius:100px;margin-top:7px;"></div></div>
+            <div><div style="font-size:24px;font-weight:800;color:var(--purple);font-family:'Space Grotesk',sans-serif;">67%</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Freshers</div><div style="height:3px;background:var(--purple);border-radius:100px;margin-top:7px;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mission card -->
+      <div style="margin:0 20px 16px;">
+        <div style="background:linear-gradient(135deg,#0B1D33,#1a3a6b);border-radius:16px;padding:20px;text-align:center;">
+          <div style="color:var(--green);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif;margin-bottom:8px;">Mission Statement</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:14px;line-height:1.65;font-style:italic;">"Empowering Telangana youth with verified digital work opportunities — creating a trusted, income-ready workforce for the future."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Footer -->
+    <div style="background:var(--jet-black);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="color:rgba(255,255,255,0.4);font-size:10px;font-family:'Space Grotesk',sans-serif;">Powered by</div>
+        <div style="color:white;font-size:13px;font-weight:700;margin-top:1px;font-family:'Space Grotesk',sans-serif;">Government of Telangana</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="logo-icon" style="width:32px;height:32px;font-size:14px;border-radius:8px;">V</div>
+        <div><div style="color:white;font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;">VERIFIED</div><div style="color:var(--green);font-size:10px;font-family:'Space Grotesk',sans-serif;">Trusted Work.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /device -->
+</div><!-- /outer-wrapper -->
+
+<script>
+  const SCREENS = ['login','verify','training','dashboard','task','submitted','review','earnings','admin','impact'];
+
+  function go(name) {
+    SCREENS.forEach((s, i) => {
+      const screen = document.getElementById('screen-' + s);
+      const tab = document.querySelectorAll('.demo-tab')[i];
+      if (s === name) {
+        screen.classList.add('active');
+        screen.style.animation = 'none';
+        screen.offsetHeight; // reflow
+        screen.style.animation = 'fadeUp 0.32s ease';
+        tab.classList.add('active');
+        screen.scrollTop = 0;
+      } else {
+        screen.classList.remove('active');
+        tab.classList.remove('active');
+      }
+    });
+  }
+
+  function selectCat(btn, colorClass) {
+    document.querySelectorAll('#cat-grid .category-btn').forEach(b => {
+      b.className = b.className.replace(/\s*(cat-selected|cat-red|cat-green|cat-yellow|cat-purple|cat-gray)/g, '');
+    });
+    if (colorClass) btn.classList.add(colorClass);
+    else btn.classList.add('cat-selected');
+  }
+
+  // Live countdown timer
+  let secs = 154;
+  setInterval(() => {
+    secs--;
+    if (secs < 0) secs = 300;
+    const m = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    const el = document.getElementById('task-timer');
+    if (el) el.textContent = `⏱ ${m}:${s}`;
+  }, 1000);
+</script>
+</body>
+</html>
